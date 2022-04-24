@@ -1,15 +1,20 @@
 import { Route, Routes } from "react-router-dom"
 import Nav from "./components/Nav"
 import Home from "./pages/Home"
-import About from "./pages/About"
+import Mygraces from "./pages/Mygraces"
+import Reports from "./pages/Reports"
 
 function App() {
   return (
     <div>
       <Nav />
-      <Routes>
-        <Route path="/home" element={<Home />} />
-      </Routes>
+      <div className="mt-5 container">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/mygraces" element={<Mygraces />} />
+          <Route path="/reports" element={<Reports />} />
+        </Routes>
+      </div>
     </div>
   )
 }
