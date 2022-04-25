@@ -2,6 +2,8 @@ import React, { useState } from "react"
 import { useForm } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup"
+import ImageUploading from "react-images-uploading"
+import Swal from "sweetalert2/dist/sweetalert2.all.min.js"
 
 const schema = yup
   .object({
@@ -17,6 +19,12 @@ const schema = yup
   .required()
 
 function Signup() {
+  const [images, setImages] = React.useState([])
+  const maxNumber = 1
+  const onChange = (imageList, addUpdateIndex) => {
+    console.log(imageList, addUpdateIndex)
+    setImages(imageList)
+  }
   const {
     register,
     handleSubmit,
@@ -24,7 +32,31 @@ function Signup() {
   } = useForm({
     resolver: yupResolver(schema),
   })
-  const onSubmit = (data) => console.log(data)
+  const onSubmit = (data) => {
+    console.log(data)
+    console.log(images)
+    if (!images.length) {
+      Swal.fire({
+        icon: "warning",
+        title: "กรุณาอัปโหลดรูปโปรไฟล์",
+      })
+    } else {
+      Swal.fire({
+        title: "ยืนยันข้อมูลถูกต้องหรือไม่",
+        text: "คุณต้องการสมัครสมาชิกหรือไม่",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#6E7881",
+        confirmButtonText: "ยืนยัน",
+        cancelButtonText: "ยกเลิก",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire("สมัครสมาชิกสำเร็จ", "กรุณาตรวจสอบอีเมล์", "success")
+        }
+      })
+    }
+  }
   return (
     <div>
       <h2>สมัครสมาชิก</h2>
@@ -108,6 +140,60 @@ function Signup() {
             <div className="mt-1 text-danger">
               {errors.confirmPassword?.message}
             </div>
+          </div>
+          <div className="mb-3">
+            <ImageUploading
+              multiple
+              value={images}
+              onChange={onChange}
+              maxNumber={maxNumber}
+              dataURLKey="data_url"
+            >
+              {({
+                imageList,
+                onImageUpload,
+                onImageRemoveAll,
+                onImageUpdate,
+                onImageRemove,
+                isDragging,
+                dragProps,
+              }) => (
+                // write your building UI
+                <div className="upload__image-wrapper mb-3">
+                  <div
+                    className="btn btn-light mb-3"
+                    style={isDragging ? { color: "red" } : undefined}
+                    onClick={onImageUpload}
+                    {...dragProps}
+                  >
+                    <i className="fa-solid fa-plus"></i> อัปโหลดรูปโปรไฟล์
+                  </div>
+                  {imageList.map((image, index) => (
+                    <div key={index} className="image-item text-center">
+                      <img
+                        src={image["data_url"]}
+                        alt=""
+                        className="w-50 image-item__btn-wrapper mb-3"
+                      />
+                      <div className="image-item__btn-wrapper text-center">
+                        <div
+                          className="btn btn-sm btn-warning me-2"
+                          onClick={() => onImageUpdate(index)}
+                        >
+                          เปลี่ยน
+                        </div>
+                        <div
+                          className="btn btn-sm btn-danger me-2"
+                          onClick={() => onImageRemove(index)}
+                        >
+                          ลบ
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </ImageUploading>
           </div>
           <div className="text-center mb-3">
             <button className="btn btn-success" type="submit">

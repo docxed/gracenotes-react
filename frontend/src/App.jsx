@@ -10,7 +10,7 @@ function App() {
   return (
     <div>
       <Nav />
-      <div className="mt-5 container">
+      <div className="my-5 container">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/mygraces" element={<Mygraces />} />
